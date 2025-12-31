@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>第二課・練習二：句子重組</title>
+  <style>
+    :root{
+      --card:#ffffff; --bg:#e9f7ff; --ink:#0f172a; --muted:#64748b;
+      --good:#16a34a; --bad:#dc2626; --brand:#0ea5e9; --line:#e2e8f0; --soft:#f8fafc;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: linear-gradient(180deg, var(--bg), #ffffff);
+      color: var(--ink);
+    }
+    .wrap{ max-width: 980px; margin:0 auto; padding: 20px; }
+    .header{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; flex-wrap:wrap; margin-bottom:14px;
+    }
+    .title{
+      font-size: 22px; font-weight: 950;
+      display:flex; flex-direction:column; gap:6px;
+    }
+    .subtitle{ color: var(--muted); font-weight: 800; font-size: 14px; }
+    .stats{ display:flex; gap:10px; color:var(--muted); font-weight:800; flex-wrap:wrap; }
+    .pill{
+      background:#f1f5f9; border:1px solid var(--line);
+      padding:6px 10px; border-radius:999px;
+    }
+
+    .card{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow: 0 10px 25px rgba(2,132,199,.08);
+      padding:16px;
+    }
+
+    .sectionTag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 12px; border-radius:999px;
+      background:#f1f5f9; border:1px solid var(--line);
+      font-weight:900; color:var(--brand);
+      margin-bottom:10px;
+    }
+
+    .prompt{
+      font-weight: 950;
+      font-size: 18px;
+      line-height: 1.5;
+      margin: 6px 0 10px;
+    }
+    .hintRow{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      color: var(--muted); font-weight: 900; font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .hintRow .hint{
+      background: var(--soft);
+      border: 1px dashed #cbd5e1;
+      border-radius: 999px;
+      padding: 6px 10px;
+    }
+
+    .sentenceBox{
+      border: 2px dashed #cbd5e1;
+      border-radius: 16px;
+      background: #ffffff;
+      padding: 12px;
+      min-height: 64px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
+    .sentenceBox .placeholder{
+      color: #94a3b8;
+      font-weight: 900;
+    }
+
+    .tileBank{
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--soft);
+      padding: 12px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
+
+    .tile{
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background:#fff;
+      font-weight: 950;
+      cursor: pointer;
+      user-select:none;
+      transition: transform .05s ease, background .2s ease, border-color .2s ease;
+    }
+    .tile:hover{ border-color:#93c5fd; background:#ffffff; }
+    .tile:active{ transform: scale(0.99); }
+    .tile.used{
+      opacity: .45;
+      cursor:not-allowed;
+      text-decoration: line-through;
+    }
+
+    .feedback{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:var(--soft);
+      display:none;
+      font-weight: 950;
+      white-space: pre-line;
+      line-height: 1.45;
+    }
+    .feedback.ok{ display:block; background:#f0fdf4; color:#166534; border-color:#bbf7d0; }
+    .feedback.no{ display:block; background:#fef2f2; color:#991b1b; border-color:#fecaca; }
+
+    .actions{
+      margin-top: 14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .btn{
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:var(--brand);
+      color:#fff;
+      font-weight:950;
+      cursor:pointer;
+    }
+    .btn.secondary{
+      background:#fff;
+      color:var(--ink);
+    }
+    .btn:disabled{ opacity:.55; cursor:not-allowed; }
+
+    .progress{ height: 10px; width: 100%; background: var(--line); border-radius: 999px; overflow:hidden; margin-top: 12px; }
+    .bar{ height:100%; width:0%; background: linear-gradient(90deg, #22c55e, var(--brand)); transition: width .35s ease; }
+
+    @media (max-width: 600px){
+      .wrap{ padding:14px; }
+      .tile{ padding: 14px 14px; font-size: 18px; }
+      .btn{ width: 100%; padding: 14px 16px; font-size: 16px; border-radius: 14px; }
+      .actions{ justify-content: stretch; }
+      .prompt{ font-size: 20px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="title">
+        第二課・練習二：句子重組
+        <div class="subtitle">點詞卡組成正確句子（含標點）</div>
+      </div>
+      <div class="stats">
+        <span class="pill">分數：<span id="score">0</span></span>
+        <span class="pill">進度：<span id="progress">0/0</span></span>
+      </div>
+    </div>
+
+    <div class="card" id="card"></div>
+  </div>
+
+<script>
+  // ✅ 題目：依你提供的「正確答案」更新
+  const ITEMS = [
+    {
+      title: "肥沃",
+      words: ["這塊","土地","非常","肥沃","。"],
+      answer: "這塊土地非常肥沃。"
+    },
+    {
+      title: "恩惠",
+      words: ["政府的","補助","對","居民","是","一種","恩惠","。"],
+      answer: "政府的補助對居民是一種恩惠。"
+    },
+    {
+      title: "灌溉",
+      words: ["農民","用","河水","來","灌溉","農田","。"],
+      answer: "農民用河水來灌溉農田。"
+    },
+    {
+      title: "然而",
+      words: ["他","很努力","然而","失敗了","。"],
+      answer: "他很努力然而失敗了。"
+    },
+    {
+      title: "居然",
+      words: ["他","居然","沒","準備","就","通過","考試","了","。"],
+      answer: "他居然沒準備就通過考試了。"
+    },
+    {
+      title: "將",
+      words: ["他","將","門","關上了","。"],
+      answer: "他將門關上了。"
+    }
+  ];
+
+  let idx = 0;
+  let score = 0;
+  let checked = false;
+
+  const $card = document.getElementById("card");
+  const $score = document.getElementById("score");
+  const $progress = document.getElementById("progress");
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function resetGame(){
+    idx = 0;
+    score = 0;
+    checked = false;
+    $score.textContent = score;
+    $progress.textContent = `1/${ITEMS.length}`;
+    render();
+  }
+
+  function render(){
+    checked = false;
+    const item = ITEMS[idx];
+    $progress.textContent = `${idx+1}/${ITEMS.length}`;
+
+    const bank = shuffle(item.words);
+    const used = new Array(bank.length).fill(false);
+    const chosen = [];
+
+    $card.innerHTML = `
+      <div class="sectionTag">句子重組：${item.title}</div>
+
+      <div class="prompt">把詞卡排成正確句子：</div>
+      <div class="hintRow">
+        <span class="hint">點下面詞卡 ➜ 加到上方句子</span>
+        <span class="hint">點上方詞卡 ➜ 移除回去</span>
+      </div>
+
+      <div class="sentenceBox" id="sentenceBox">
+        <span class="placeholder">（你的句子會出現在這裡）</span>
+      </div>
+
+      <div class="tileBank" id="tileBank"></div>
+
+      <div id="feedback" class="feedback"></div>
+
+      <div class="actions">
+        <button class="btn secondary" id="clearBtn">清空</button>
+        <button class="btn secondary" id="skipBtn">跳過</button>
+        <button class="btn" id="checkBtn">檢查</button>
+        <button class="btn" id="nextBtn" disabled>${idx === ITEMS.length-1 ? "完成" : "下一題"}</button>
+      </div>
+
+      <div class="progress"><div class="bar" id="bar"></div></div>
+    `;
+
+    document.getElementById("bar").style.width =
+      Math.round((idx / ITEMS.length) * 100) + "%";
+
+    const sentenceBox = document.getElementById("sentenceBox");
+    const tileBank = document.getElementById("tileBank");
+    const fb = document.getElementById("feedback");
+    const nextBtn = document.getElementById("nextBtn");
+
+    function renderSentence(){
+      sentenceBox.innerHTML = "";
+      if (chosen.length === 0){
+        const p = document.createElement("span");
+        p.className = "placeholder";
+        p.textContent = "（你的句子會出現在這裡）";
+        sentenceBox.appendChild(p);
+        return;
+      }
+      chosen.forEach((w, ci) => {
+        const t = document.createElement("span");
+        t.className = "tile";
+        t.textContent = w;
+        t.title = "點一下移除";
+        t.onclick = () => {
+          if (checked) return;
+          const bankIndex = bank.findIndex((bw, bi) => bw === w && used[bi] === true);
+          if (bankIndex !== -1) used[bankIndex] = false;
+          chosen.splice(ci, 1);
+          renderSentence();
+          renderBank();
+        };
+        sentenceBox.appendChild(t);
+      });
+    }
+
+    function renderBank(){
+      tileBank.innerHTML = "";
+      bank.forEach((w, bi) => {
+        const t = document.createElement("span");
+        t.className = "tile" + (used[bi] ? " used" : "");
+        t.textContent = w;
+        t.title = used[bi] ? "已使用" : "點一下加入句子";
+        t.onclick = () => {
+          if (checked) return;
+          if (used[bi]) return;
+          used[bi] = true;
+          chosen.push(w);
+          renderSentence();
+          renderBank();
+        };
+        tileBank.appendChild(t);
+      });
+    }
+
+    function currentSentence(){
+      return chosen.join("");
+    }
+
+    renderSentence();
+    renderBank();
+
+    document.getElementById("clearBtn").onclick = () => {
+      if (checked) return;
+      for(let i=0;i<used.length;i++) used[i] = false;
+      chosen.length = 0;
+      renderSentence();
+      renderBank();
+    };
+
+    document.getElementById("skipBtn").onclick = () => goNext();
+
+    document.getElementById("checkBtn").onclick = () => {
+      if (checked) return;
+      checked = true;
+
+      const s = currentSentence();
+      const ok = s === item.answer;
+
+      if (ok){
+        score += 1;
+        $score.textContent = score;
+        fb.className = "feedback ok";
+        fb.textContent = `✅ 正確！+1 分\n你的句子：${s}`;
+      } else {
+        fb.className = "feedback no";
+        fb.textContent = `❌ 不正確。\n你的句子：${s || "（空白）"}\n正確句子：${item.answer}`;
+      }
+
+      nextBtn.disabled = false;
+    };
+
+    nextBtn.onclick = () => goNext();
+
+    function goNext(){
+      if (idx < ITEMS.length - 1){
+        idx++;
+        render();
+      } else {
+        renderEnd();
+      }
+    }
+  }
+
+  function renderEnd(){
+    $progress.textContent = `${ITEMS.length}/${ITEMS.length}`;
+    $card.innerHTML = `
+      <div class="sectionTag">完成</div>
+      <div class="prompt">🎉 做完了！</div>
+      <div class="feedback ok" style="display:block;">
+        分數：${score} / ${ITEMS.length}
+      </div>
+      <div class="actions">
+        <button class="btn" id="restartBtn">再玩一次</button>
+      </div>
+    `;
+    document.getElementById("restartBtn").onclick = resetGame;
+  }
+
+  resetGame();
+</script>
+</body>
+</html>
