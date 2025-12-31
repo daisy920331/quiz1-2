@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>第二課｜練習目錄</title>
+  <style>
+    :root{
+  /* Lesson 2 – 深藍版 */
+  --card:#ffffff;
+  --bg:#b8d6ea;
+  --bg2:#9fc5e1;
+  --ink:#081a2b;
+  --muted:#2e4a63;
+  --brand:#1e40af;
+  --accent:#075985;
+  --line:#7aa6c7;
+  --soft:#dcecf7;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: linear-gradient(180deg, var(--bg2), var(--bg));
+      color: var(--ink);
+    }
+
+    .wrap{
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header{
+      margin-bottom: 18px;
+    }
+
+    .courseTag{
+      display:inline-block;
+      padding:6px 14px;
+      border-radius:999px;
+      background:#0c4a6e;
+      color:#e0f2fe;
+      font-weight:900;
+      font-size:14px;
+      margin-bottom:8px;
+    }
+
+    .title{
+      font-size:28px;
+      font-weight:950;
+      margin:0 0 6px;
+    }
+
+    .subtitle{
+      font-size:15px;
+      font-weight:800;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap:16px;
+      margin-top:20px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:18px;
+      box-shadow:0 12px 30px rgba(2, 48, 96, 0.18);
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .card h3{
+      margin:0;
+      font-size:20px;
+      font-weight:950;
+      color:var(--accent);
+    }
+
+    .desc{
+      font-size:14px;
+      font-weight:800;
+      color:var(--muted);
+      line-height:1.6;
+    }
+
+    .tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+
+    .tag{
+      font-size:12px;
+      font-weight:900;
+      padding:4px 10px;
+      border-radius:999px;
+      background:var(--soft);
+      border:1px solid var(--line);
+      color:#0c4a6e;
+    }
+
+    .actions{
+      margin-top:auto;
+      display:flex;
+      gap:10px;
+    }
+
+    .btn{
+      flex:1;
+      text-align:center;
+      padding:12px 14px;
+      border-radius:14px;
+      background:var(--brand);
+      color:#fff;
+      text-decoration:none;
+      font-weight:900;
+      border:1px solid #1e40af;
+    }
+
+    .btn.secondary{
+      background:#ffffff;
+      color:var(--brand);
+    }
+
+    .footer{
+      margin-top:24px;
+      font-size:13px;
+      font-weight:800;
+      color:#1e3a5f;
+      text-align:center;
+    }
+
+    @media (max-width:600px){
+      .title{ font-size:24px; }
+      .btn{ padding:14px 16px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="courseTag">Lesson 2</div>
+      <h1 class="title">第二課｜自然與人</h1>
+      <p class="subtitle">
+        練習本課重點詞彙與句型，<br>
+        包含填空、句子重組與閱讀理解。
+      </p>
+    </div>
+
+    <div class="grid">
+      <!-- 練習一 -->
+      <div class="card">
+        <h3>練習一｜句子填空</h3>
+        <p class="desc">
+          在句中空白處填入正確詞語，<br>
+          練習第二課核心詞彙。
+        </p>
+        <div class="tags">
+          <span class="tag">填空</span>
+          <span class="tag">詞彙</span>
+          <span class="tag">基礎</span>
+        </div>
+        <div class="actions">
+          <a class="btn" href="quiz2-1.html">開始 Start</a>
+        </div>
+      </div>
+
+      <!-- 練習二 -->
+      <div class="card">
+        <h3>練習二｜句子重組</h3>
+        <p class="desc">
+          將詞卡重新排列，<br>
+          組成語意正確的完整句子。
+        </p>
+        <div class="tags">
+          <span class="tag">句型</span>
+          <span class="tag">語序</span>
+          <span class="tag">互動</span>
+        </div>
+        <div class="actions">
+          <a class="btn" href="quiz2-2.html">開始 Start</a>
+        </div>
+      </div>
+
+      <!-- 練習三 -->
+      <div class="card">
+        <h3>練習三｜閱讀理解</h3>
+        <p class="desc">
+          閱讀短文後回答問題，<br>
+          理解「自然與人的關係」。
+        </p>
+        <div class="tags">
+          <span class="tag">閱讀</span>
+          <span class="tag">理解</span>
+          <span class="tag">選擇題</span>
+        </div>
+        <div class="actions">
+          <a class="btn" href="quiz2-3.html">開始 Start</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      第二課練習目錄｜Lesson 2 Practice Menu
+    </div>
+  </div>
+</body>
+</html>
