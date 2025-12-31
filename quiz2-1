@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>第二課・練習一：句子填空</title>
+  <style>
+    :root{
+      --card:#ffffff;
+      --bg:#e9f7ff;
+      --ink:#0f172a;
+      --muted:#64748b;
+      --good:#16a34a;
+      --bad:#dc2626;
+      --brand:#0ea5e9;
+      --line:#e2e8f0;
+      --soft:#f8fafc;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: linear-gradient(180deg, var(--bg), #ffffff);
+      color: var(--ink);
+    }
+    .wrap{ max-width: 980px; margin:0 auto; padding: 20px; }
+
+    .header{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; flex-wrap:wrap; margin-bottom:14px;
+    }
+    .title{
+      font-size: 22px; font-weight: 950;
+      display:flex; flex-direction:column; gap:6px;
+    }
+    .subtitle{ color: var(--muted); font-weight: 800; font-size: 14px; }
+    .stats{ display:flex; gap:10px; color:var(--muted); font-weight:800; }
+
+    .pill{
+      background:#f1f5f9; border:1px solid var(--line);
+      padding:6px 10px; border-radius:999px;
+    }
+
+    .card{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow: 0 10px 25px rgba(2,132,199,.08);
+      padding:16px;
+    }
+
+    .sectionTag{
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      background:#f1f5f9;
+      border:1px solid var(--line);
+      font-weight:900;
+      color:var(--brand);
+      margin-bottom:10px;
+    }
+
+    .bank{
+      display:flex; flex-wrap:wrap; gap:8px;
+      padding:10px;
+      border:1px dashed #cbd5e1;
+      border-radius:14px;
+      background: var(--soft);
+      margin-bottom:12px;
+    }
+    .chip{
+      padding:6px 12px;
+      border-radius:999px;
+      background:#ffffff;
+      border:1px solid var(--line);
+      font-weight:900;
+      font-size:14px;
+    }
+
+    .fillList{ display:grid; gap:10px; }
+
+    .fillItem{
+      display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+      padding:10px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#ffffff;
+      font-weight:800;
+    }
+    .fillItem b{ color:var(--brand); }
+
+    select{
+      appearance:none;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+      font-weight:900;
+      min-width:140px;
+    }
+
+    .feedback{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:var(--soft);
+      display:none;
+      font-weight:900;
+      white-space:pre-line;
+    }
+    .feedback.ok{ display:block; background:#f0fdf4; color:#166534; border-color:#bbf7d0; }
+    .feedback.no{ display:block; background:#fef2f2; color:#991b1b; border-color:#fecaca; }
+
+    .actions{
+      margin-top:14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .btn{
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:var(--brand);
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .btn.secondary{
+      background:#ffffff;
+      color:var(--ink);
+    }
+
+    @media (max-width:600px){
+      .wrap{ padding:14px; }
+      select{ width:100%; }
+      .btn{ width:100%; padding:14px 16px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="title">
+        第二課・練習一：句子填空
+        <div class="subtitle">在句中空白處填入適合的詞彙</div>
+      </div>
+      <div class="stats">
+        <span class="pill">分數：<span id="score">0</span></span>
+      </div>
+    </div>
+
+    <div class="card" id="card"></div>
+  </div>
+
+<script>
+/* ===== 辭庫 ===== */
+const WORDS = [
+  "敬畏","搏鬥","肥沃","威脅",
+  "恩惠","抗衡","馴服","灌溉","英雄"
+];
+
+/* ===== 填空題 ===== */
+const QUESTIONS = [
+  { text: "農夫利用水來", answer: "灌溉", tail: "農田。" },
+  { text: "氣候變化對農業造成很大的", answer: "威脅", tail: "。" },
+  { text: "這塊土地十分", answer: "肥沃", tail: "，一年四季都能種菜。" },
+  { text: "消防員救出孩子，大家稱他為", answer: "英雄", tail: "。" },
+  { text: "人很難與大自然", answer: "抗衡", tail: "。" },
+  { text: "人們對大自然充滿", answer: "敬畏", tail: "，所以會保護環境。" },
+  { text: "長時間乾旱對農民是一種", answer: "威脅", tail: "。" },
+  { text: "他努力訓練，終於", answer: "馴服", tail: "了那隻怕生的狗。" }
+];
+
+let score = 0;
+const card = document.getElementById("card");
+const scoreEl = document.getElementById("score");
+
+function render(){
+  const bankHTML = WORDS.map(w => `<span class="chip">${w}</span>`).join("");
+
+  const listHTML = QUESTIONS.map((q, i) => `
+    <div class="fillItem">
+      <b>${String.fromCharCode(65+i)}.</b>
+      <span>${q.text}</span>
+      <select data-i="${i}">
+        <option value="">（選擇）</option>
+        ${WORDS.map(w => `<option value="${w}">${w}</option>`).join("")}
+      </select>
+      <span>${q.tail}</span>
+    </div>
+  `).join("");
+
+  card.innerHTML = `
+    <div class="sectionTag">句子填空</div>
+
+    <div class="bank">${bankHTML}</div>
+
+    <div class="fillList">
+      ${listHTML}
+    </div>
+
+    <div id="feedback" class="feedback"></div>
+
+    <div class="actions">
+      <button class="btn secondary" onclick="reset()">重來</button>
+      <button class="btn" onclick="check()">送出檢查</button>
+    </div>
+  `;
+}
+
+function check(){
+  const selects = document.querySelectorAll("select");
+  let correct = 0;
+  let report = [];
+
+  selects.forEach((sel, i) => {
+    if(sel.value === QUESTIONS[i].answer){
+      correct++;
+      report.push(`${String.fromCharCode(65+i)} ✅`);
+    }else{
+      report.push(`${String.fromCharCode(65+i)} ❌（正解：${QUESTIONS[i].answer}）`);
+    }
+  });
+
+  score = correct;
+  scoreEl.textContent = score;
+
+  const fb = document.getElementById("feedback");
+  if(correct === QUESTIONS.length){
+    fb.className = "feedback ok";
+    fb.textContent = `🎉 全部正確！ ${correct}/${QUESTIONS.length}\n\n${report.join("｜")}`;
+  }else{
+    fb.className = "feedback no";
+    fb.textContent = `完成：${correct}/${QUESTIONS.length}\n\n${report.join("｜")}`;
+  }
+}
+
+function reset(){
+  score = 0;
+  scoreEl.textContent = score;
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
