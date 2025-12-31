@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>第二課・練習三：閱讀理解</title>
+  <style>
+    :root{
+      --card:#ffffff; --bg:#e9f7ff; --ink:#0f172a; --muted:#64748b;
+      --good:#16a34a; --bad:#dc2626; --brand:#0ea5e9; --line:#e2e8f0; --soft:#f8fafc;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: linear-gradient(180deg, var(--bg), #ffffff);
+      color: var(--ink);
+    }
+    .wrap{ max-width: 980px; margin:0 auto; padding: 20px; }
+
+    .header{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; flex-wrap:wrap; margin-bottom:14px;
+    }
+    .title{
+      font-size: 22px; font-weight: 950;
+      display:flex; flex-direction:column; gap:6px;
+    }
+    .subtitle{ color: var(--muted); font-weight: 800; font-size: 14px; }
+    .stats{ display:flex; gap:10px; color:var(--muted); font-weight:800; flex-wrap:wrap; }
+    .pill{
+      background:#f1f5f9; border:1px solid var(--line);
+      padding:6px 10px; border-radius:999px;
+    }
+
+    .card{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow: 0 10px 25px rgba(2,132,199,.08);
+      padding:16px;
+    }
+
+    .sectionTag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 12px; border-radius:999px;
+      background:#f1f5f9; border:1px solid var(--line);
+      font-weight:900; color:var(--brand);
+      margin-bottom:10px;
+    }
+
+    .reading{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:var(--soft);
+      padding:14px;
+      font-weight:800;
+      line-height:1.75;
+      margin-bottom:14px;
+    }
+    .reading p{ margin:0 0 10px; }
+    .reading p:last-child{ margin-bottom:0; }
+
+    .qno{ color:var(--brand); font-weight:900; margin-top:10px; }
+    .question{
+      font-size:18px;
+      font-weight:950;
+      margin:8px 0 12px;
+    }
+
+    .options{ display:grid; gap:10px; }
+    button.opt{
+      width:100%;
+      text-align:left;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-size:16px;
+      font-weight:900;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    button.opt:hover{ border-color:#93c5fd; background:#f8fafc; }
+    button.opt:disabled{ opacity:.9; cursor:not-allowed; }
+
+    .key{
+      width:30px; height:30px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#f1f5f9;
+      display:grid; place-items:center;
+      font-weight:900;
+      flex:0 0 auto;
+    }
+
+    .feedback{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:var(--soft);
+      display:none;
+      font-weight:900;
+      white-space:pre-line;
+    }
+    .feedback.ok{ display:block; background:#f0fdf4; color:#166534; border-color:#bbf7d0; }
+    .feedback.no{ display:block; background:#fef2f2; color:#991b1b; border-color:#fecaca; }
+
+    .actions{
+      margin-top:14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .btn{
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:var(--brand);
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .btn.secondary{ background:#fff; color:var(--ink); }
+
+    @media (max-width:600px){
+      .wrap{ padding:14px; }
+      button.opt{ font-size:18px; padding:18px 16px; }
+      .key{ width:38px; height:38px; font-size:16px; }
+      .btn{ width:100%; padding:14px 16px; font-size:16px; }
+      .actions{ justify-content:stretch; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="title">
+        第二課・練習三：閱讀理解
+        <div class="subtitle">閱讀短文後，選出正確答案</div>
+      </div>
+      <div class="stats">
+        <span class="pill">分數：<span id="score">0</span></span>
+        <span class="pill">進度：<span id="progress">0/2</span></span>
+      </div>
+    </div>
+
+    <div class="card" id="card"></div>
+  </div>
+
+<script>
+  /* ===== 閱讀短文 ===== */
+  const READING = [
+    "在一條大河旁，住著一位河神。他每天看著河水流過土地，讓農田變得肥沃。村民對河水充滿敬畏，因為水能帶來恩惠，也可能成為威脅。",
+    "有一年，下雨特別多，河水上升，村民開始擔心洪水。有人希望河神立刻停止河水，有人卻認為，如果沒有水，就不能灌溉，土地會變得乾旱。",
+    "河神聽見大家的討論，決定控制河水的力量。他沒有讓河水太多，也沒有讓河水太少。慢慢地，河水被馴服，農田再次變得肥沃。",
+    "村民明白了一件事：面對自然，人不能只想抗衡，也要學會尊重並正確使用。"
+  ];
+
+  /* ===== 選擇題 ===== */
+  const QUESTIONS = [
+    {
+      q: "為什麼村民對河水充滿敬畏？",
+      options: [
+        { text: "因為水很漂亮", correct: false },
+        { text: "因為水是恩惠也是威脅", correct: true },
+        { text: "因為河神常生氣", correct: false },
+        { text: "因為河水流得很慢", correct: false }
+      ],
+      explain: "短文第一段提到：水能帶來恩惠，也可能成為威脅。"
+    },
+    {
+      q: "村民學到什麼？",
+      options: [
+        { text: "只要抗衡自然就夠了", correct: false },
+        { text: "面對自然，要尊重並合理使用", correct: true },
+        { text: "神可以控制一切", correct: false },
+        { text: "洪水不會發生", correct: false }
+      ],
+      explain: "短文最後一段指出：人要尊重自然，並正確使用。"
+    }
+  ];
+
+  let idx = 0;
+  let score = 0;
+  let locked = false;
+
+  const card = document.getElementById("card");
+  const scoreEl = document.getElementById("score");
+  const progressEl = document.getElementById("progress");
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function render(){
+    locked = false;
+    progressEl.textContent = `${idx}/${QUESTIONS.length}`;
+
+    if(idx === 0){
+      card.innerHTML = `
+        <div class="sectionTag">閱讀短文</div>
+        <div class="reading">
+          ${READING.map(p => `<p>${p}</p>`).join("")}
+        </div>
+        <div class="actions">
+          <button class="btn" id="startBtn">開始作答</button>
+        </div>
+      `;
+      document.getElementById("startBtn").onclick = () => {
+        idx = 1;
+        render();
+      };
+      return;
+    }
+
+    const q = QUESTIONS[idx-1];
+    progressEl.textContent = `${idx}/${QUESTIONS.length}`;
+
+    const opts = shuffle(q.options);
+    const keys = ["A","B","C","D"];
+
+    card.innerHTML = `
+      <div class="sectionTag">選擇題</div>
+      <div class="qno">第 ${idx} 題</div>
+      <div class="question">${q.q}</div>
+
+      <div class="options">
+        ${opts.map((o,i)=>`
+          <button class="opt" data-correct="${o.correct}">
+            <span class="key">${keys[i]}</span>
+            <span>${o.text}</span>
+          </button>
+        `).join("")}
+      </div>
+
+      <div id="feedback" class="feedback"></div>
+
+      <div class="actions">
+        <button class="btn secondary" id="skipBtn">跳過</button>
+        <button class="btn" id="nextBtn" disabled>${idx===QUESTIONS.length ? "完成" : "下一題"}</button>
+      </div>
+    `;
+
+    document.querySelectorAll(".opt").forEach(btn=>{
+      btn.onclick = ()=>{
+        if(locked) return;
+        locked = true;
+        const fb = document.getElementById("feedback");
+        const ok = btn.dataset.correct === "true";
+        if(ok){
+          score++;
+          scoreEl.textContent = score;
+          fb.className = "feedback ok";
+          fb.textContent = "✅ 答對了！\n" + q.explain;
+        }else{
+          fb.className = "feedback no";
+          fb.textContent = "❌ 答錯了。\n" + q.explain;
+        }
+        document.querySelectorAll(".opt").forEach(b=>b.disabled=true);
+        document.getElementById("nextBtn").disabled = false;
+      };
+    });
+
+    document.getElementById("skipBtn").onclick = next;
+    document.getElementById("nextBtn").onclick = next;
+
+    function next(){
+      if(idx < QUESTIONS.length){
+        idx++;
+        render();
+      }else{
+        renderEnd();
+      }
+    }
+  }
+
+  function renderEnd(){
+    progressEl.textContent = `${QUESTIONS.length}/${QUESTIONS.length}`;
+    card.innerHTML = `
+      <div class="sectionTag">完成</div>
+      <div class="reading">
+        🎉 完成閱讀練習！<br>
+        得分：<b>${score}</b> / ${QUESTIONS.length}
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="location.reload()">再做一次</button>
+      </div>
+    `;
+  }
+
+  render();
+</script>
+</body>
+</html>
